@@ -306,6 +306,29 @@
             font-style: normal;
         }
         
+        /* Credits footer */
+        .credits {
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+        
+        .credits p {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+        
+        .credits a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .credits a:hover {
+            text-decoration: underline;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .main-content {
@@ -475,6 +498,10 @@ retry:<br>
             </blockquote>
             <cite>— Core principle</cite>
         </footer>
+        
+        <div class="credits">
+            <p>Made with ❤️ and GitHub CLI by <a href="https://ag11.dev" target="_blank">ag11.dev</a></p>
+        </div>
     </div>
 </body>
 </html>
