@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof Agent - AI Verification System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Clean spacing scale */
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Professional color system - warm grays with strategic red accent */
+            --surface-0: #fefefe;
+            --surface-1: #f8f9fa;
+            --surface-2: #e9ecef;
+            --surface-3: #dee2e6;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --accent-primary: #dc3545; /* Strong red for verification theme */
+            --accent-success: #198754;
+            --accent-warning: #fd7e14;
+            --border-subtle: #e9ecef;
+            
+            /* Type scale */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter Tight', -apple-system, system-ui, sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--surface-0);
+            font-size: var(--text-base);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-lg);
+        }
+        
+        /* Clean header - left aligned, minimal */
+        .header {
+            margin-bottom: var(--space-3xl);
+            max-width: 600px;
+        }
+        
+        .header h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--text-4xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+            letter-spacing: -0.02em;
+        }
+        
+        .header .subtitle {
+            font-size: var(--text-xl);
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.4;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .header .stats {
+            display: flex;
+            gap: var(--space-xl);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--text-sm);
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: var(--text-xs);
+        }
+        
+        /* Two-column layout for main content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-3xl);
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .content-section {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .content-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-xs);
+            border-bottom: 2px solid var(--accent-primary);
+            display: inline-block;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            font-size: var(--text-base);
+            line-height: 1.5;
+        }
+        
+        .feature-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .feature-marker {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            margin-top: 0.6em;
+            flex-shrink: 0;
+        }
+        
+        /* Sidebar content */
+        .sidebar {
+            background: var(--surface-1);
+            padding: var(--space-xl);
+            border-radius: 8px;
+            height: fit-content;
+        }
+        
+        .code-block {
+            background: var(--text-primary);
+            color: var(--surface-0);
+            padding: var(--space-lg);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--text-sm);
+            line-height: 1.4;
+            margin: var(--space-lg) 0;
+            overflow-x: auto;
+        }
+        
+        .code-block .comment {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        
+        /* Verdict grid - clean three-column */
+        .verdict-section {
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .verdict-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .verdict-card {
+            padding: var(--space-xl);
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .verdict-card.pass {
+            background: var(--accent-success);
+            color: white;
+        }
+        
+        .verdict-card.fail {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .verdict-card.partial {
+            background: var(--accent-warning);
+            color: white;
+        }
+        
+        .verdict-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--text-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .verdict-card p {
+            font-size: var(--text-sm);
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+        
+        /* Process flow */
+        .process-flow {
+            background: var(--surface-1);
+            padding: var(--space-2xl);
+            border-radius: 8px;
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .process-step {
+            text-align: center;
+            padding: var(--space-lg);
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin: 0 auto var(--space-sm);
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-sm);
+        }
+        
+        .step-description {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        /* Footer quote - left aligned */
+        .principle {
+            background: var(--text-primary);
+            color: var(--surface-0);
+            padding: var(--space-2xl);
+            border-radius: 8px;
+            max-width: 600px;
+        }
+        
+        .principle blockquote {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: var(--text-xl);
+            font-weight: 500;
+            line-height: 1.4;
+            font-style: normal;
+        }
+        
+        .principle cite {
+            display: block;
+            margin-top: var(--space-md);
+            font-size: var(--text-sm);
+            opacity: 0.8;
+            font-style: normal;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: var(--space-xl);
+            }
+            
+            .verdict-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .header .stats {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            
+            .container {
+                padding: var(--space-xl) var(--space-md);
+            }
+        }
+        
+        /* Subtle hover states */
+        .verdict-card {
+            transition: transform 0.2s ease;
+        }
+        
+        .verdict-card:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>proof-agent</h1>
+            <p class="subtitle">Independent adversarial verification for AI-generated code. Catches what workers miss before production.</p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Self-verification</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Check points</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">3x</span>
+                    <span class="stat-label">Auto-retry</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="primary-content">
+                <section class="content-section">
+                    <h2 class="section-title">What It Does</h2>
+                    <ul class="feature-list">
+                        <li><div class="feature-marker"></div>Spawns independent verifier agent separate from the worker</li>
+                        <li><div class="feature-marker"></div>Runs actual commands and provides evidence-based verification</li>
+                        <li><div class="feature-marker"></div>Catches false claims, broken code, and security vulnerabilities</li>
+                        <li><div class="feature-marker"></div>Validates factual claims in documentation and code comments</li>
+                        <li><div class="feature-marker"></div>Provides audit trail with command output and evidence</li>
+                    </ul>
+                </section>
+
+                <section class="content-section">
+                    <h2 class="section-title">Automatic Triggers</h2>
+                    <ul class="feature-list">
+                        <li><div class="feature-marker"></div>Subagent changes 3+ files in a single operation</li>
+                        <li><div class="feature-marker"></div>Any file matching patterns: *auth*, *secret*, *permission*, Dockerfile, *.env*</li>
+                        <li><div class="feature-marker"></div>User explicitly requests verification with command or flag</li>
+                        <li><div class="feature-marker"></div>Critical system configuration files modified</li>
+                    </ul>
+                </section>
+
+                <section class="content-section">
+                    <h2 class="section-title">Verification Checklist</h2>
+                    <ul class="feature-list">
+                        <li><div class="feature-marker"></div><strong>Correctness:</strong> Does the code actually do what was requested?</li>
+                        <li><div class="feature-marker"></div><strong>Bugs & Edge Cases:</strong> Regressions, unhandled errors, missed cases</li>
+                        <li><div class="feature-marker"></div><strong>Security:</strong> Vulnerabilities, exposed secrets, permission issues</li>
+                        <li><div class="feature-marker"></div><strong>Build:</strong> Does it build, compile, or lint cleanly?</li>
+                        <li><div class="feature-marker"></div><strong>Facts:</strong> Are claims, version numbers, or URLs verifiable?</li>
+                    </ul>
+                </section>
+            </div>
+            
+            <aside class="sidebar">
+                <h3 class="section-title">Quick Start</h3>
+                <div class="code-block">
+# Verify last commit<br>
+bash scripts/verify.sh<br>
+<br>
+# Verify since main branch<br>
+bash scripts/verify.sh main<br>
+<br>
+# Fact-check documentation<br>
+bash scripts/fact-check.sh *.md
+                </div>
+                
+                <h3 class="section-title">Configuration</h3>
+                <div class="code-block">
+<span class="comment"># proof-agent.yaml</span><br>
+thresholds:<br>
+&nbsp;&nbsp;min_files_changed: 3<br>
+&nbsp;&nbsp;always_verify:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- "**/*auth*"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;- "**/Dockerfile"<br>
+retry:<br>
+&nbsp;&nbsp;max_attempts: 3
+                </div>
+            </aside>
+        </div>
+
+        <section class="verdict-section">
+            <h2 class="section-title">Verification Outcomes</h2>
+            <div class="verdict-grid">
+                <div class="verdict-card pass">
+                    <h3>✓ PASS</h3>
+                    <p>All checks passed with evidence. Code is ready for deployment.</p>
+                </div>
+                <div class="verdict-card fail">
+                    <h3>✗ FAIL</h3>
+                    <p>Issues found with specifics. Auto-retry up to 3 times if fixable.</p>
+                </div>
+                <div class="verdict-card partial">
+                    <h3>△ PARTIAL</h3>
+                    <p>Some checks passed, others unverifiable. User decides next action.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="process-flow">
+            <h2 class="section-title">How It Works</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Trigger Detection</div>
+                    <div class="step-description">Monitors file changes and security-sensitive patterns</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Spawn Verifier</div>
+                    <div class="step-description">Creates independent agent with no knowledge of worker results</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Run Checks</div>
+                    <div class="step-description">Executes verification commands and gathers evidence</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Assign Verdict</div>
+                    <div class="step-description">PASS, FAIL, or PARTIAL with supporting evidence</div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="principle">
+            <blockquote>
+                The worker and verifier must be separate agents. Self-verification is not verification.
+            </blockquote>
+            <cite>— Core principle</cite>
+        </footer>
+    </div>
+</body>
+</html>
