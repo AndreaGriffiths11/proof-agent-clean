@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Independent adversarial verification for AI-generated code. Catches security vulnerabilities, bugs, and quality issues before merge.">
     <title>Proof Agent - AI Verification System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -173,7 +174,7 @@
             height: fit-content;
         }
         
-        .code-block {
+        .sidebar pre {
             background: var(--text-primary);
             color: var(--surface-0);
             padding: var(--space-lg);
@@ -183,13 +184,16 @@
             line-height: 1.4;
             margin: var(--space-lg) 0;
             overflow-x: auto;
+            white-space: pre-wrap;
         }
         
-        .code-block .comment {
-            color: var(--text-muted);
-            opacity: 0.7;
+        .sidebar code {
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
         }
         
+
         /* Verdict grid - clean three-column */
         .verdict-section {
             margin-bottom: var(--space-3xl);
@@ -415,8 +419,8 @@
                     <span class="stat-label">Check points</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-value">3x</span>
-                    <span class="stat-label">Auto-retry</span>
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">Providers</span>
                 </div>
             </div>
         </header>
@@ -427,10 +431,10 @@
                     <h2 class="section-title">What It Does</h2>
                     <ul class="feature-list">
                         <li><div class="feature-marker"></div>Spawns independent verifier agent separate from the worker</li>
-                        <li><div class="feature-marker"></div>Runs actual commands and provides evidence-based verification</li>
-                        <li><div class="feature-marker"></div>Catches false claims, broken code, and security vulnerabilities</li>
-                        <li><div class="feature-marker"></div>Validates factual claims in documentation and code comments</li>
-                        <li><div class="feature-marker"></div>Provides audit trail with command output and evidence</li>
+                        <li><div class="feature-marker"></div>Reviews code changes and provides evidence-based static analysis</li>
+                        <li><div class="feature-marker"></div>Catches suspicious patterns, bugs, and security vulnerabilities</li>
+                        <li><div class="feature-marker"></div>Flags suspicious claims in documentation and code comments</li>
+                        <li><div class="feature-marker"></div>Provides detailed analysis with file and line references</li>
                     </ul>
                 </section>
 
@@ -450,36 +454,57 @@
                         <li><div class="feature-marker"></div><strong>Correctness:</strong> Does the code actually do what was requested?</li>
                         <li><div class="feature-marker"></div><strong>Bugs & Edge Cases:</strong> Regressions, unhandled errors, missed cases</li>
                         <li><div class="feature-marker"></div><strong>Security:</strong> Vulnerabilities, exposed secrets, permission issues</li>
-                        <li><div class="feature-marker"></div><strong>Build:</strong> Does it build, compile, or lint cleanly?</li>
-                        <li><div class="feature-marker"></div><strong>Facts:</strong> Are claims, version numbers, or URLs verifiable?</li>
+                        <li><div class="feature-marker"></div><strong>Build:</strong> Are there obvious syntax errors or missing imports?</li>
+                        <li><div class="feature-marker"></div><strong>Facts:</strong> Do version numbers, imports, and references look plausible?</li>
                     </ul>
                 </section>
             </div>
             
             <aside class="sidebar">
-                <h3 class="section-title">Quick Start</h3>
-                <div class="code-block">
-# Verify last commit<br>
-bash scripts/verify.sh<br>
-<br>
-# Verify since main branch<br>
-bash scripts/verify.sh main<br>
-<br>
-# Fact-check documentation<br>
-bash scripts/fact-check.sh *.md
-                </div>
+                <h3 class="section-title">GitHub Action (Zero Setup)</h3>
+                <pre><code>name: Proof Agent
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  models: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: AndreaGriffiths11/proof-agent@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+</code></pre>
+                
+                <h3 class="section-title">Command Line</h3>
+                <pre><code># Verify last commit
+bash scripts/verify.sh
+
+# Verify since main branch  
+bash scripts/verify.sh main
+
+# Generate verification prompt
+bash scripts/verify.sh > prompt.txt
+</code></pre>
                 
                 <h3 class="section-title">Configuration</h3>
-                <div class="code-block">
-<span class="comment"># proof-agent.yaml</span><br>
-thresholds:<br>
-&nbsp;&nbsp;min_files_changed: 3<br>
-&nbsp;&nbsp;always_verify:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- "**/*auth*"<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- "**/Dockerfile"<br>
-retry:<br>
-&nbsp;&nbsp;max_attempts: 3
-                </div>
+                <pre><code># proof-agent.yaml
+thresholds:
+  min_files_changed: 3
+  always_verify:
+    - "**/*auth*"
+    - "**/Dockerfile"
+retry:
+  max_attempts: 3
+</code></pre>
             </aside>
         </div>
 
@@ -516,8 +541,8 @@ retry:<br>
                 </div>
                 <div class="process-step">
                     <div class="step-number">3</div>
-                    <div class="step-title">Run Checks</div>
-                    <div class="step-description">Executes verification commands and gathers evidence</div>
+                    <div class="step-title">Review Changes</div>
+                    <div class="step-description">Analyzes code diff for security issues, bugs, and correctness</div>
                 </div>
                 <div class="process-step">
                     <div class="step-number">4</div>
@@ -537,11 +562,12 @@ retry:<br>
         <div class="disclaimer">
             <h3>⚠️ Experimental Tool</h3>
             <p>Proof Agent is an experimental verification system. While it catches many issues, you still need to understand your code and review results carefully. Use as a supplement to, not replacement for, human code review.</p>
-            <p><strong>Repository:</strong> <a href="https://github.com/AndreaGriffiths11/proof-agent" target="_blank">github.com/AndreaGriffiths11/proof-agent</a></p>
+            <p><strong>Repository:</strong> <a href="https://github.com/AndreaGriffiths11/proof-agent" target="_blank" rel="noopener noreferrer">github.com/AndreaGriffiths11/proof-agent</a></p>
+            <p><strong>GitHub Action:</strong> <a href="https://github.com/marketplace/actions/proof-agent-verify" target="_blank" rel="noopener noreferrer">GitHub Marketplace</a></p>
         </div>
         
         <div class="credits">
-            <p>Made with ❤️ and GitHub CLI by <a href="https://ag11.dev" target="_blank">ag11.dev</a></p>
+            <p>Made with ❤️ and GitHub CLI by <a href="https://ag11.dev" target="_blank" rel="noopener noreferrer">ag11.dev</a></p>
         </div>
     </div>
 </body>
