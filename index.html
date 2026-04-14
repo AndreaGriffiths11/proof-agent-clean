@@ -435,6 +435,7 @@
                         <li><div class="feature-marker"></div>Catches suspicious patterns, bugs, and security vulnerabilities</li>
                         <li><div class="feature-marker"></div>Flags suspicious claims in documentation and code comments</li>
                         <li><div class="feature-marker"></div>Provides detailed analysis with file and line references</li>
+                        <li><div class="feature-marker"></div><strong>Requires capable models:</strong> 7B+ parameters recommended for reliable security detection</li>
                     </ul>
                 </section>
 
@@ -505,6 +506,14 @@ thresholds:
 retry:
   max_attempts: 3
 </code></pre>
+                
+                <h3 class="section-title">⚠️ Model Requirements</h3>
+                <div style="background: var(--accent-warning); color: white; padding: var(--space-md); border-radius: 6px; font-size: var(--text-sm); line-height: 1.4; margin: var(--space-lg) 0;">
+                    <strong>Security verification requires substantial model capability.</strong><br><br>
+                    <strong>Minimum:</strong> 2B parameters for basic detection<br>
+                    <strong>Recommended:</strong> 7B+ parameters for production<br><br>
+                    Models under 2B parameters may produce <strong>false passes</strong> and miss critical security vulnerabilities.
+                </div>
             </aside>
         </div>
 
